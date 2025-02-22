@@ -1,0 +1,2 @@
+C:/Users/dhiya/OneDrive/Desktop/basic/GymManagement/android/app/.cxx/Debug/5f6j6c59/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/dhiya/OneDrive/Desktop/basic/GymManagement/android/app/.cxx/Debug/5f6j6c59/armeabi-v7a/CMakeFiles/rebuild_cache.dir

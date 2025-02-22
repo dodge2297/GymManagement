@@ -1,3 +1,16 @@
+// Root-level build.gradle file
+
+buildscript {
+    repositories {
+        google()           // Google's Maven repository
+        mavenCentral()     // Maven Central repository
+    }
+    dependencies {
+        // Update the AGP version here
+        classpath 'com.android.tools.build:gradle:8.2.1'  // Update to version 8.2.1 or higher
+    }
+}
+
 allprojects {
     repositories {
         google()
@@ -5,14 +18,16 @@ allprojects {
     }
 }
 
-rootProject.buildDir = "../build"
+rootProject.buildDir = "../build"  // Specifies the root build directory
+
 subprojects {
-    project.buildDir = "${rootProject.buildDir}/${project.name}"
+    project.buildDir = "${rootProject.buildDir}/${project.name}"  // Defines subproject build directories
 }
+
 subprojects {
-    project.evaluationDependsOn(":app")
+    project.evaluationDependsOn(":app")  // Ensures :app is evaluated before others
 }
 
 tasks.register("clean", Delete) {
-    delete rootProject.buildDir
+    delete rootProject.buildDir  // Clean task to delete the build directory
 }

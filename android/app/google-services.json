@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "759825919554",
+    "project_id": "gymmanagement-524ae",
+    "storage_bucket": "gymmanagement-524ae.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:759825919554:android:588d28924074b2417107db",
+        "android_client_info": {
+          "package_name": "com.example.gym_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCfJtXsmpiCz_NIPeYg6oUMoDA6iBk9omo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
