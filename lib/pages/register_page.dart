@@ -3,54 +3,75 @@ import 'package:gym_app/components/my_button.dart';
 import 'package:gym_app/components/my_textfield.dart';
 import 'package:gym_app/components/square_tile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:gym_app/pages/login_page.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-class LoginPage extends StatefulWidget {
+class RegisterPage extends StatefulWidget {
   final Function()? onTap;
-  const LoginPage({super.key, required this.onTap});
+  RegisterPage({super.key, required this.onTap});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   final emailController = TextEditingController();
-
   final passwordController = TextEditingController();
-
-  //debug code
-
-  void signUserIn() async {
+  final confirmPasswordController = TextEditingController();
+  void signUserUp() async {
     showDialog(
-        context: context,
-        builder: (context) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        });
+      context: context,
+      builder: (context) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
 
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: emailController.text, password: passwordController.text);
-      Navigator.pop(context);
+      if (passwordController.text == confirmPasswordController.text) {
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: emailController.text,
+          password: passwordController.text,
+        );
+
+        // Close the loading dialog
+        Navigator.pop(context);
+
+        // Navigate to login page after successful registration
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => LoginPage(
+                    onTap: widget.onTap,
+                  )),
+        );
+      } else {
+        Navigator.pop(context);
+        final theme = ShadTheme.of(context);
+
+        ShadToaster.of(context).show(
+          ShadToast.destructive(
+            title: const Text('Uh oh! Something went wrong'),
+            description: const Text('Passwords do not match'),
+            action: ShadButton.destructive(
+              child: const Text('Try again'),
+              decoration: ShadDecoration(
+                border: ShadBorder.all(
+                  color: theme.colorScheme.destructiveForeground,
+                ),
+              ),
+              onPressed: () => ShadToaster.of(context).hide(),
+            ),
+          ),
+        );
+      }
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context);
-
-      final theme = ShadTheme.of(context);
-
       ShadToaster.of(context).show(
         ShadToast.destructive(
-          title: const Text('Uh oh! Something went wrong'),
-          description: const Text('Invalid email or password'),
-          action: ShadButton.destructive(
-            child: const Text('Try again'),
-            decoration: ShadDecoration(
-              border: ShadBorder.all(
-                color: theme.colorScheme.destructiveForeground,
-              ),
-            ),
-            onPressed: () => ShadToaster.of(context).hide(),
-          ),
+          title: const Text('Error'),
+          description: Text(e.message ?? 'Something went wrong'),
         ),
       );
     }
@@ -59,7 +80,6 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //resizeToAvoidBottomInset: false,
       backgroundColor: Colors.grey[300],
       body: SafeArea(
         child: SingleChildScrollView(
@@ -72,6 +92,11 @@ class _LoginPageState extends State<LoginPage> {
                 Image.asset(
                   'lib/images/logo.png',
                   height: 150,
+                ),
+
+                Text(
+                  'Welcome to the club!',
+                  style: TextStyle(color: Colors.grey[800], fontSize: 20),
                 ),
 
                 SizedBox(
@@ -100,18 +125,16 @@ class _LoginPageState extends State<LoginPage> {
 
                 SizedBox(height: 10),
 
+                //Confirm Password
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        'Forgot Password?',
-                        style: TextStyle(color: Colors.grey[500]),
-                      ),
-                    ],
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: MyTextfield(
+                      controller: confirmPasswordController,
+                      hintText: 'Confirm Password',
+                      obscureText: true),
                 ),
+
+                SizedBox(height: 10),
 
                 SizedBox(
                   height: 20,
@@ -119,8 +142,8 @@ class _LoginPageState extends State<LoginPage> {
 
                 //button
                 MyButton(
-                  onTap: signUserIn,
-                  text: 'Sign In',
+                  onTap: signUserUp,
+                  text: 'Sign Up',
                 ),
 
                 SizedBox(height: 50),
@@ -163,7 +186,7 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Not a member?',
+                      'Already a member?',
                       style: TextStyle(color: Colors.grey[700]),
                     ),
                     SizedBox(
@@ -171,7 +194,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     GestureDetector(
                       onTap: widget.onTap,
-                      child: Text('Register now',
+                      child: Text('Login now',
                           style: TextStyle(
                               color: Colors.blue, fontWeight: FontWeight.bold)),
                     )
