@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
+// Exercise model class
 class Exercise {
   final String name;
   final String setsReps;
@@ -19,15 +20,17 @@ class Exercise {
   });
 }
 
-class AbsExercisesListPage extends StatefulWidget {
-  const AbsExercisesListPage({Key? key}) : super(key: key);
+class UpperBodyExercisesListPage extends StatefulWidget {
+  const UpperBodyExercisesListPage({Key? key}) : super(key: key);
 
   @override
-  _AbsExercisesListPageState createState() => _AbsExercisesListPageState();
+  _UpperBodyExercisesListPageState createState() =>
+      _UpperBodyExercisesListPageState();
 }
 
-class _AbsExercisesListPageState extends State<AbsExercisesListPage> {
-  late List<Exercise> absExercises;
+class _UpperBodyExercisesListPageState
+    extends State<UpperBodyExercisesListPage> {
+  late List<Exercise> upperBodyExercises;
   bool isLoading = true;
 
   @override
@@ -39,99 +42,96 @@ class _AbsExercisesListPageState extends State<AbsExercisesListPage> {
   void _loadExercises() {
     setState(() => isLoading = true);
     try {
-      absExercises = [
+      upperBodyExercises = [
         Exercise(
-          name: "Cable Crunch",
-          setsReps: "4 Sets x 12 Reps",
-          videoId: "ToJeyhydUxU",
-          instructions:
-              "Use a cable machine to crunch down slowly. Focus on squeezing your abs at the bottom.",
-          focus: "Upper Abs",
-          image: "lib/images/cable_crunch.png",
+          name: "Bench Press (Flat)",
+          setsReps: "4 Sets x 8-12 Reps",
+          videoId: "YQ2s_Y7g5Qk",
+          instructions: "Keep your back flat and push through your chest.",
+          focus: "Chest, Triceps, Shoulders",
+          image: "lib/images/bench_press.png",
         ),
         Exercise(
-          name: "Hanging Leg Raise",
+          name: "Incline Bench Press",
           setsReps: "4 Sets x 10 Reps",
-          videoId: "7FwGZ8qY5OU",
-          instructions:
-              "Hang from a bar and lift your legs to 90°, engaging lower abs.",
-          focus: "Lower Abs",
-          image: "lib/images/hanging_leg_raise.png",
+          videoId: "8urE8Z8AMQ4",
+          instructions: "Use a 30-45 degree incline for upper chest focus.",
+          focus: "Upper Chest, Shoulders, Triceps",
+          image: "lib/images/incline_bench_press.png",
         ),
         Exercise(
-          name: "Decline Sit-Up",
-          setsReps: "4 Sets x 15 Reps",
-          videoId: "N7hf1_vcX5w",
-          instructions:
-              "On a decline bench, perform sit-ups for added resistance.",
-          focus: "Abs",
-          image: "lib/images/decline_situp.png",
-        ),
-        Exercise(
-          name: "Ab Wheel Rollout",
+          name: "Chest Fly",
           setsReps: "3 Sets x 12 Reps",
-          videoId: "DA2QGI0NPWU",
-          instructions:
-              "Kneel down and roll forward with an ab wheel, keeping your core tight.",
-          focus: "Core, Abs",
-          image: "lib/images/ab_wheel_rollout.png",
+          videoId: "eGjt4lk6g34",
+          instructions: "Keep a slight bend in the elbows and stretch fully.",
+          focus: "Chest",
+          image: "lib/images/chest_fly.png",
         ),
         Exercise(
-          name: "Russian Twists",
-          setsReps: "3 Sets x 20 Reps",
-          videoId: "Tau0hsW8iR0",
+          name: "Pull-Ups",
+          setsReps: "3 Sets x 8-12 Reps",
+          videoId: "b3L_d3zACC0",
           instructions:
-              "Sit with your knees bent and twist side to side using a medicine ball.",
-          focus: "Obliques, Abs",
-          image: "lib/images/russian_twists.png",
+              "Use a full range of motion for maximum back engagement.",
+          focus: "Back, Biceps, Core",
+          image: "lib/images/pull_ups.png",
         ),
         Exercise(
-          name: "Weighted Plank",
-          setsReps: "3 Sets x 30 Sec",
-          videoId: "H88Ip-MUWn0",
+          name: "Lat Pulldown",
+          setsReps: "4 Sets x 10-12 Reps",
+          videoId: "NAIEnMjN-6w",
           instructions:
-              "Hold a plank with added weight on your back for extra resistance.",
-          focus: "Core, Abs",
-          image: "lib/images/weighted_plank.png",
+              "Pull down to your chest while keeping your back straight.",
+          focus: "Lats, Upper Back, Biceps",
+          image: "lib/images/lat_pulldown.png",
         ),
         Exercise(
-          name: "Cable Woodchopper",
+          name: "Seated Row",
           setsReps: "4 Sets x 12 Reps",
-          videoId: "iWxTGXIViro",
+          videoId: "UCXxvVItLoM",
           instructions:
-              "Use a cable machine to perform diagonal woodchoppers for rotational strength.",
-          focus: "Obliques",
-          image: "lib/images/cable_woodchopper.png",
+              "Keep your back straight and pull towards your midsection.",
+          focus: "Back, Biceps",
+          image: "lib/images/seated_row.png",
         ),
         Exercise(
-          name: "Machine Crunch",
-          setsReps: "4 Sets x 12 Reps",
-          videoId: "6GMKPQVERzw",
-          instructions: "Use the ab crunch machine with slow, controlled reps.",
-          focus: "Abs",
-          image: "lib/images/machine_crunch.png",
+          name: "Overhead Shoulder Press",
+          setsReps: "4 Sets x 8-10 Reps",
+          videoId: "WvLMauqrnK8",
+          instructions:
+              "Press the weight overhead without arching your lower back.",
+          focus: "Shoulders, Triceps",
+          image: "lib/images/shoulder_press.png",
         ),
         Exercise(
-          name: "Hanging Knee Raise",
-          setsReps: "4 Sets x 12 Reps",
-          videoId: "RD_A-Z15ER4",
+          name: "Lateral Raises",
+          setsReps: "3 Sets x 12-15 Reps",
+          videoId: "XPPfnSEATJA",
           instructions:
-              "Hang from a bar and tuck your knees toward your chest to engage the lower abs.",
-          focus: "Lower Abs",
-          image: "lib/images/hanging_knee_raise.png",
+              "Raise dumbbells to the sides with a slight elbow bend.",
+          focus: "Shoulders",
+          image: "lib/images/lateral_raises.png",
         ),
         Exercise(
-          name: "Medicine Ball Slam",
-          setsReps: "3 Sets x 15 Reps",
-          videoId: "CkO1mfSBvv4",
+          name: "Bicep Curls",
+          setsReps: "3 Sets x 12 Reps",
+          videoId: "qeI6R6r4jlM",
           instructions:
-              "Slam the medicine ball with full force, engaging your entire core.",
-          focus: "Abs, Full Body",
-          image: "lib/images/medicine_ball_slam.png",
+              "Keep elbows close to your body and control the movement.",
+          focus: "Biceps",
+          image: "lib/images/bicep_curls.png",
+        ),
+        Exercise(
+          name: "Tricep Dips",
+          setsReps: "3 Sets x 10-12 Reps",
+          videoId: "oA8Sxv2WeOs",
+          instructions: "Lower yourself slowly and push up using your triceps.",
+          focus: "Triceps, Chest, Shoulders",
+          image: "lib/images/tricep_dips.png",
         ),
       ];
     } catch (e) {
-      absExercises = [];
+      upperBodyExercises = [];
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error loading exercises: $e')),
       );
@@ -143,13 +143,14 @@ class _AbsExercisesListPageState extends State<AbsExercisesListPage> {
   @override
   void dispose() {
     super.dispose();
+    // Clean up any remaining resources if needed
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Abs Exercises"),
+        title: const Text("Upper Body Exercises"),
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
         centerTitle: true,
@@ -157,9 +158,9 @@ class _AbsExercisesListPageState extends State<AbsExercisesListPage> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
-              itemCount: absExercises.length,
+              itemCount: upperBodyExercises.length,
               itemBuilder: (context, index) {
-                final exercise = absExercises[index];
+                final exercise = upperBodyExercises[index];
                 return ExerciseCard(
                   exercise: exercise,
                   onTap: () => _showExerciseBottomSheet(context, exercise),
@@ -215,7 +216,9 @@ class _AbsExercisesListPageState extends State<AbsExercisesListPage> {
                             controller: youtubeController,
                             showVideoProgressIndicator: true,
                             progressIndicatorColor: Colors.red,
-                            onReady: () {},
+                            onReady: () {
+                              // Ensure the controller is ready
+                            },
                             onEnded: (metaData) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(content: Text('Video ended')),

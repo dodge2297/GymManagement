@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'routes.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
@@ -17,13 +18,25 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  Future<void> _signUserOut(BuildContext context) async {
+    await FirebaseAuth.instance.signOut();
+    if (!mounted) return;
+    Navigator.pushReplacementNamed(context, AppRoutes.auth);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('GYM TRACK', style: TextStyle(color: Colors.white)),
         centerTitle: true,
-        backgroundColor: const Color.fromARGB(255, 23, 18, 16),
+        backgroundColor: Colors.black,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout, color: Colors.black),
+            onPressed: () => _signUserOut(context),
+          ),
+        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -49,9 +62,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     buildGridItem(
                         context, Icons.bar_chart, 'Training Stats', '/stats'),
                     buildGridItem(
-                        context, Icons.schedule, 'Schedule', '/schedule'),
+                        context, Icons.payment, 'Payment History', '/history'),
                     buildGridItem(context, Icons.directions_run, 'Exercises',
-                        AppRoutes.exercises), // Fixed Navigation
+                        AppRoutes.exercises),
                     buildGridItem(
                         context, Icons.settings, 'Settings', '/settings'),
                   ],
@@ -85,17 +98,18 @@ class _HomeScreenState extends State<HomeScreen> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: () {
-          Navigator.pushNamed(context, route); // Fixed Navigation
+          Navigator.pushNamed(context, route);
         },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 40, color: Colors.black87),
+            Icon(icon, size: 40, color: Colors.black),
             const SizedBox(height: 8),
-            Text(label,
-                textAlign: TextAlign.center,
-                style:
-                    const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ),
           ],
         ),
       ),

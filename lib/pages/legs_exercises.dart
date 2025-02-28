@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
+// Exercise model class
 class Exercise {
   final String name;
   final String setsReps;
@@ -19,15 +20,15 @@ class Exercise {
   });
 }
 
-class AbsExercisesListPage extends StatefulWidget {
-  const AbsExercisesListPage({Key? key}) : super(key: key);
+class LegsExercisesListPage extends StatefulWidget {
+  const LegsExercisesListPage({Key? key}) : super(key: key);
 
   @override
-  _AbsExercisesListPageState createState() => _AbsExercisesListPageState();
+  _LegsExercisesListPageState createState() => _LegsExercisesListPageState();
 }
 
-class _AbsExercisesListPageState extends State<AbsExercisesListPage> {
-  late List<Exercise> absExercises;
+class _LegsExercisesListPageState extends State<LegsExercisesListPage> {
+  late List<Exercise> legsExercises;
   bool isLoading = true;
 
   @override
@@ -39,99 +40,100 @@ class _AbsExercisesListPageState extends State<AbsExercisesListPage> {
   void _loadExercises() {
     setState(() => isLoading = true);
     try {
-      absExercises = [
+      legsExercises = [
         Exercise(
-          name: "Cable Crunch",
-          setsReps: "4 Sets x 12 Reps",
-          videoId: "ToJeyhydUxU",
-          instructions:
-              "Use a cable machine to crunch down slowly. Focus on squeezing your abs at the bottom.",
-          focus: "Upper Abs",
-          image: "lib/images/cable_crunch.png",
-        ),
-        Exercise(
-          name: "Hanging Leg Raise",
+          name: "Barbell Squat",
           setsReps: "4 Sets x 10 Reps",
-          videoId: "7FwGZ8qY5OU",
+          videoId: "i7J5h7BJ07g",
           instructions:
-              "Hang from a bar and lift your legs to 90°, engaging lower abs.",
-          focus: "Lower Abs",
-          image: "lib/images/hanging_leg_raise.png",
+              "Stand with feet shoulder-width apart, lower yourself by bending knees, keep your back straight, then push up.",
+          focus: "Quads, Hamstrings, Glutes, Core",
+          image: "lib/images/barbell_squat.png",
         ),
         Exercise(
-          name: "Decline Sit-Up",
-          setsReps: "4 Sets x 15 Reps",
-          videoId: "N7hf1_vcX5w",
-          instructions:
-              "On a decline bench, perform sit-ups for added resistance.",
-          focus: "Abs",
-          image: "lib/images/decline_situp.png",
-        ),
-        Exercise(
-          name: "Ab Wheel Rollout",
-          setsReps: "3 Sets x 12 Reps",
-          videoId: "DA2QGI0NPWU",
-          instructions:
-              "Kneel down and roll forward with an ab wheel, keeping your core tight.",
-          focus: "Core, Abs",
-          image: "lib/images/ab_wheel_rollout.png",
-        ),
-        Exercise(
-          name: "Russian Twists",
-          setsReps: "3 Sets x 20 Reps",
-          videoId: "Tau0hsW8iR0",
-          instructions:
-              "Sit with your knees bent and twist side to side using a medicine ball.",
-          focus: "Obliques, Abs",
-          image: "lib/images/russian_twists.png",
-        ),
-        Exercise(
-          name: "Weighted Plank",
-          setsReps: "3 Sets x 30 Sec",
-          videoId: "H88Ip-MUWn0",
-          instructions:
-              "Hold a plank with added weight on your back for extra resistance.",
-          focus: "Core, Abs",
-          image: "lib/images/weighted_plank.png",
-        ),
-        Exercise(
-          name: "Cable Woodchopper",
+          name: "Leg Press",
           setsReps: "4 Sets x 12 Reps",
-          videoId: "iWxTGXIViro",
+          videoId: "yZmx_Ac3880",
           instructions:
-              "Use a cable machine to perform diagonal woodchoppers for rotational strength.",
-          focus: "Obliques",
-          image: "lib/images/cable_woodchopper.png",
+              "Position feet shoulder-width apart on the platform and push up without locking knees.",
+          focus: "Quads, Hamstrings, Glutes",
+          image: "lib/images/leg_press.png",
         ),
         Exercise(
-          name: "Machine Crunch",
-          setsReps: "4 Sets x 12 Reps",
-          videoId: "6GMKPQVERzw",
-          instructions: "Use the ab crunch machine with slow, controlled reps.",
-          focus: "Abs",
-          image: "lib/images/machine_crunch.png",
-        ),
-        Exercise(
-          name: "Hanging Knee Raise",
-          setsReps: "4 Sets x 12 Reps",
-          videoId: "RD_A-Z15ER4",
+          name: "Romanian Deadlift",
+          setsReps: "4 Sets x 10 Reps",
+          videoId: "Wou9zVQrAfs",
           instructions:
-              "Hang from a bar and tuck your knees toward your chest to engage the lower abs.",
-          focus: "Lower Abs",
-          image: "lib/images/hanging_knee_raise.png",
+              "Keep a slight bend in knees, lower the bar while keeping your back straight, then return to standing.",
+          focus: "Hamstrings, Glutes, Lower Back",
+          image: "lib/images/romanian_deadlift.png",
         ),
         Exercise(
-          name: "Medicine Ball Slam",
+          name: "Lunges",
+          setsReps: "3 Sets x 12 Reps (Each Leg)",
+          videoId: "eFWCn5iEbTU",
+          instructions:
+              "Step forward with one leg, lower your body until your knee is at 90°. Then, return to standing and repeat.",
+          focus: "Quads, Hamstrings, Glutes, Core",
+          image: "lib/images/lunges.png",
+        ),
+        Exercise(
+          name: "Bulgarian Split Squats",
+          setsReps: "3 Sets x 12 Reps (Each Leg)",
+          videoId: "XPlFxw_HbJk",
+          instructions:
+              "Place one foot on a bench behind you, lower your body until your thigh is parallel to the ground, then return to standing.",
+          focus: "Quads, Glutes, Hamstrings",
+          image: "lib/images/bulgarian_split_squats.png",
+        ),
+        Exercise(
+          name: "Leg Extensions",
           setsReps: "3 Sets x 15 Reps",
-          videoId: "CkO1mfSBvv4",
+          videoId: "MpEydcQ1oDw",
           instructions:
-              "Slam the medicine ball with full force, engaging your entire core.",
-          focus: "Abs, Full Body",
-          image: "lib/images/medicine_ball_slam.png",
+              "Sit on the leg extension machine, adjust the pad, and extend your legs until your knees are straight.",
+          focus: "Quads",
+          image: "lib/images/leg_extensions.png",
+        ),
+        Exercise(
+          name: "Lying Hamstring Curls",
+          setsReps: "4 Sets x 12 Reps",
+          videoId: "SbSNUXPRkc8",
+          instructions:
+              "Lie on the machine and curl your legs toward your glutes, keeping your hips in contact with the pad.",
+          focus: "Hamstrings",
+          image: "lib/images/lying_hamstring_curls.png",
+        ),
+        Exercise(
+          name: "Calf Raises",
+          setsReps: "4 Sets x 15-20 Reps",
+          videoId: "g_E7_q1z2bo",
+          instructions:
+              "Stand with feet shoulder-width apart, raise your heels as high as possible, then slowly lower them back down.",
+          focus: "Calves (Gastrocnemius & Soleus)",
+          image: "lib/images/calf_raises.png",
+        ),
+        Exercise(
+          name: "Hack Squats",
+          setsReps: "4 Sets x 10 Reps",
+          videoId: "rYgNArpwE7E",
+          instructions:
+              "Place your feet on the platform, keep your back flat against the pad, and squat down to a 90° angle.",
+          focus: "Quads, Glutes, Hamstrings",
+          image: "lib/images/hack_squats.png",
+        ),
+        Exercise(
+          name: "Sissy Squats",
+          setsReps: "3 Sets x 12 Reps",
+          videoId: "p_2jIY7foxA",
+          instructions:
+              "Stand with feet shoulder-width apart, lean back while lowering your body towards the ground, and return to standing.",
+          focus: "Quads",
+          image: "lib/images/sissy_squats.png",
         ),
       ];
     } catch (e) {
-      absExercises = [];
+      legsExercises = [];
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error loading exercises: $e')),
       );
@@ -143,13 +145,14 @@ class _AbsExercisesListPageState extends State<AbsExercisesListPage> {
   @override
   void dispose() {
     super.dispose();
+    // Clean up any remaining resources if needed
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Abs Exercises"),
+        title: const Text("Legs Exercises"),
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
         centerTitle: true,
@@ -157,9 +160,9 @@ class _AbsExercisesListPageState extends State<AbsExercisesListPage> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
-              itemCount: absExercises.length,
+              itemCount: legsExercises.length,
               itemBuilder: (context, index) {
-                final exercise = absExercises[index];
+                final exercise = legsExercises[index];
                 return ExerciseCard(
                   exercise: exercise,
                   onTap: () => _showExerciseBottomSheet(context, exercise),
@@ -215,7 +218,9 @@ class _AbsExercisesListPageState extends State<AbsExercisesListPage> {
                             controller: youtubeController,
                             showVideoProgressIndicator: true,
                             progressIndicatorColor: Colors.red,
-                            onReady: () {},
+                            onReady: () {
+                              // Ensure the controller is ready
+                            },
                             onEnded: (metaData) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(content: Text('Video ended')),
