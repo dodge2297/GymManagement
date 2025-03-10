@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gym_app/pages/edit_profile_page.dart';
 import 'auth_page.dart';
 import 'HomePage.dart';
 import 'Exercises.dart';
@@ -8,6 +9,9 @@ import 'register_page.dart';
 import 'abs_exercises.dart';
 import 'legs_exercises.dart';
 import 'upperbody_exercises.dart';
+ 
+
+
 
 class AppRoutes {
   static const String auth = '/';
@@ -19,6 +23,7 @@ class AppRoutes {
   static const String absExercises = '/absExercises';
   static const String legsExercises = '/legsExercises';
   static const String upperBodyExercises = '/upperBodyExercises';
+  static const String editProfile = '/edit_profile'; // Added Edit Profile Route
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -40,6 +45,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => LegsExercisesListPage());
       case upperBodyExercises:
         return MaterialPageRoute(builder: (_) => UpperBodyExercisesListPage());
+      case editProfile:
+        return MaterialPageRoute(builder: (_) => EditProfilePage()); // New Route
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
@@ -49,3 +56,4 @@ class AppRoutes {
     }
   }
 }
+

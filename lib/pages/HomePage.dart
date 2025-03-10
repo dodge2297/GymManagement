@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'routes.dart';
+import 'package:getwidget/getwidget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -11,11 +12,16 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
+    // Add navigation logic for Profile icon
+    if (index == 2) { // Profile icon is at index 2
+      Navigator.pushNamed(context, '/edit_profile'); // Navigate to EditProfilePage
+    }
   }
 
   Future<void> _signUserOut(BuildContext context) async {
@@ -27,16 +33,16 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[300],
+      key: _scaffoldKey,
       appBar: AppBar(
-        title: const Text('GYM TRACK', style: TextStyle(color: Colors.white)),
+        title: const Text(
+          'GYM TRACK',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
         backgroundColor: Colors.black,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout, color: Colors.black),
-            onPressed: () => _signUserOut(context),
-          ),
-        ],
+        foregroundColor: Colors.white,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -85,7 +91,7 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
               icon: Icon(Icons.fitness_center), label: 'Workout'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.settings), label: 'Settings'),
+              icon: Icon(Icons.person_2_outlined), label: 'Profile'),
         ],
       ),
     );
