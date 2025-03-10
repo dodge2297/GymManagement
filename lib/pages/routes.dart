@@ -8,6 +8,9 @@ import 'register_page.dart';
 import 'abs_exercises.dart';
 import 'legs_exercises.dart';
 import 'upperbody_exercises.dart';
+import 'workoutplan.dart';
+import 'workoutplandetail.dart';
+import 'paymenthistory.dart';
 
 class AppRoutes {
   static const String auth = '/';
@@ -19,7 +22,9 @@ class AppRoutes {
   static const String absExercises = '/absExercises';
   static const String legsExercises = '/legsExercises';
   static const String upperBodyExercises = '/upperBodyExercises';
-
+  static const String workoutPlan = '/workoutPlan';
+  static const String workoutPlanDetail = '/workoutPlanDetail';
+  static const String paymentHistory = '/paymentHistory';
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
       case auth:
@@ -40,12 +45,31 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => LegsExercisesListPage());
       case upperBodyExercises:
         return MaterialPageRoute(builder: (_) => UpperBodyExercisesListPage());
+      case workoutPlan:
+        return MaterialPageRoute(builder: (_) => WorkoutPlanPage());
+      case workoutPlanDetail:
+        if (settings.arguments is Map<String, dynamic>) {
+          return MaterialPageRoute(
+            builder: (_) => WorkoutPlanDetailPage(
+              plan: settings.arguments as Map<String, dynamic>,
+            ),
+          );
+        }
+        return _errorRoute('Error: No plan details provided');
+      case paymentHistory:
+        return MaterialPageRoute(builder: (_) => const PaymentHistoryPage());
       default:
-        return MaterialPageRoute(
-          builder: (_) => Scaffold(
-            body: Center(child: Text('Page Not Found')),
-          ),
-        );
+        return _errorRoute('Page Not Found: ${settings.name}');
     }
+  }
+
+  static Route<dynamic> _errorRoute([String message = 'Page Not Found']) {
+    return MaterialPageRoute(
+      builder: (_) => Scaffold(
+        body: Center(
+          child: Text(message, style: const TextStyle(fontSize: 20)),
+        ),
+      ),
+    );
   }
 }

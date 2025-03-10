@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:gym_app/components/my_button.dart';
 import 'package:gym_app/components/my_textfield.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -29,10 +30,21 @@ class _RegisterPageState extends State<RegisterPage> {
     try {
       if (passwordController.text.trim() ==
           confirmPasswordController.text.trim()) {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        UserCredential userCredential =
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailController.text.trim(),
           password: passwordController.text.trim(),
         );
+
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userCredential.user!.uid)
+            .set({
+          'email': emailController.text.trim(),
+          'isAdmin': false,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+
         if (mounted) Navigator.of(context, rootNavigator: true).pop();
         if (mounted) {
           Navigator.pushReplacementNamed(context, AppRoutes.loginRegister);

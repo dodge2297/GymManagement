@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-// Exercise model class
 class Exercise {
   final String name;
   final String setsReps;
@@ -143,7 +142,6 @@ class _UpperBodyExercisesListPageState
   @override
   void dispose() {
     super.dispose();
-    // Clean up any remaining resources if needed
   }
 
   @override

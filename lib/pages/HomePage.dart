@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.black,
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout, color: Colors.black),
+            icon: const Icon(Icons.logout, color: Colors.white),
             onPressed: () => _signUserOut(context),
           ),
         ],
@@ -58,11 +58,11 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     buildGridItem(context, Icons.face, 'Profile', '/profile'),
                     buildGridItem(context, Icons.fitness_center, 'Workout Plan',
-                        '/workout'),
+                        AppRoutes.workoutPlan),
                     buildGridItem(
                         context, Icons.bar_chart, 'Training Stats', '/stats'),
-                    buildGridItem(
-                        context, Icons.payment, 'Payment History', '/history'),
+                    buildGridItem(context, Icons.payment, 'Payment history',
+                        AppRoutes.paymentHistory),
                     buildGridItem(context, Icons.directions_run, 'Exercises',
                         AppRoutes.exercises),
                     buildGridItem(

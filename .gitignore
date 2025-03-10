@@ -43,3 +43,24 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Ignore everything by default
+*
+
+# Un-ignore the lib directory and its contents
+!/lib
+!/lib/**
+
+# Un-ignore essential Git files
+!/.git
+!/.gitignore
+
+# Un-ignore essential Flutter files
+!/pubspec.yaml
+!/pubspec.lock  # Optional: Include if you want consistent dependency versions
+!/.flutter-plugins  # Needed for plugin registration
+!/.flutter-plugins-dependencies  # Needed for plugin dependencies
+
+# Optional: Un-ignore documentation or config files if needed
+!/README.md
+!/.metadata  # Flutter project metadata

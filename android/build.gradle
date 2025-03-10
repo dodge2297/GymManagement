@@ -1,13 +1,12 @@
-// Root-level build.gradle file
-
 buildscript {
     repositories {
-        google()           // Google's Maven repository
-        mavenCentral()     // Maven Central repository
+        google()
+        mavenCentral()
     }
     dependencies {
-        // Update the AGP version here
-        classpath 'com.android.tools.build:gradle:8.2.1'  // Update to version 8.2.1 or higher
+        classpath 'com.android.tools.build:gradle:8.2.1'  // Use the latest AGP version
+        classpath 'com.google.gms:google-services:4.4.0'  // For FlutterFire
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0'  // For Kotlin
     }
 }
 
@@ -18,16 +17,23 @@ allprojects {
     }
 }
 
-rootProject.buildDir = "../build"  // Specifies the root build directory
+rootProject.buildDir = "../build"
 
 subprojects {
-    project.buildDir = "${rootProject.buildDir}/${project.name}"  // Defines subproject build directories
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
 
+// Consolidated patch for dependencies missing namespace
 subprojects {
-    project.evaluationDependsOn(":app")  // Ensures :app is evaluated before others
+    afterEvaluate {
+        if (project.name == 'upi_india') {
+            android {
+                namespace 'com.az.upi_india'  // Correct namespace, verify with manifest
+            }
+        }
+    }
 }
 
 tasks.register("clean", Delete) {
-    delete rootProject.buildDir  // Clean task to delete the build directory
+    delete rootProject.buildDir
 }
