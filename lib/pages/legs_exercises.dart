@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-// Exercise model class
 class Exercise {
   final String name;
   final String setsReps;
@@ -145,7 +144,6 @@ class _LegsExercisesListPageState extends State<LegsExercisesListPage> {
   @override
   void dispose() {
     super.dispose();
-    // Clean up any remaining resources if needed
   }
 
   @override
@@ -218,9 +216,7 @@ class _LegsExercisesListPageState extends State<LegsExercisesListPage> {
                             controller: youtubeController,
                             showVideoProgressIndicator: true,
                             progressIndicatorColor: Colors.red,
-                            onReady: () {
-                              // Ensure the controller is ready
-                            },
+                            onReady: () {},
                             onEnded: (metaData) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(content: Text('Video ended')),

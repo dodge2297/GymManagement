@@ -9,9 +9,10 @@ import 'register_page.dart';
 import 'abs_exercises.dart';
 import 'legs_exercises.dart';
 import 'upperbody_exercises.dart';
- 
-
-
+import 'workoutplan.dart';
+import 'workoutplandetail.dart';
+import 'paymenthistory.dart';
+import 'edit_profile_page.dart'; // Added Edit Profile Page
 
 class AppRoutes {
   static const String auth = '/';
@@ -25,6 +26,9 @@ class AppRoutes {
   static const String upperBodyExercises = '/upperBodyExercises';
   static const String editProfile = '/edit_profile'; // Added Edit Profile Route
 
+  static const String workoutPlan = '/workoutPlan';
+  static const String workoutPlanDetail = '/workoutPlanDetail';
+  static const String paymentHistory = '/paymentHistory';
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
       case auth:
@@ -46,14 +50,33 @@ class AppRoutes {
       case upperBodyExercises:
         return MaterialPageRoute(builder: (_) => UpperBodyExercisesListPage());
       case editProfile:
-        return MaterialPageRoute(builder: (_) => EditProfilePage()); // New Route
-      default:
         return MaterialPageRoute(
-          builder: (_) => Scaffold(
-            body: Center(child: Text('Page Not Found')),
-          ),
-        );
+            builder: (_) => EditProfilePage()); // New Route
+      case workoutPlan:
+        return MaterialPageRoute(builder: (_) => WorkoutPlanPage());
+      case workoutPlanDetail:
+        if (settings.arguments is Map<String, dynamic>) {
+          return MaterialPageRoute(
+            builder: (_) => WorkoutPlanDetailPage(
+              plan: settings.arguments as Map<String, dynamic>,
+            ),
+          );
+        }
+        return _errorRoute('Error: No plan details provided');
+      case paymentHistory:
+        return MaterialPageRoute(builder: (_) => const PaymentHistoryPage());
+      default:
+        return _errorRoute('Page Not Found: ${settings.name}');
     }
   }
-}
 
+  static Route<dynamic> _errorRoute([String message = 'Page Not Found']) {
+    return MaterialPageRoute(
+      builder: (_) => Scaffold(
+        body: Center(
+          child: Text(message, style: const TextStyle(fontSize: 20)),
+        ),
+      ),
+    );
+  }
+}

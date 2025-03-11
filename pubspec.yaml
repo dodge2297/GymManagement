@@ -20,17 +20,16 @@ dependencies:
   intl: ^0.19.0
   path_provider: ^2.0.9
   equatable: ^2.0.3
-  shadcn_ui: ^0.20.1
+  shadcn_ui: ^0.22.2
   cloud_firestore: ^5.6.4
   flutter_svg: ^2.0.9
   flutter_inappwebview: ^6.1.5
   getwidget: ^6.0.0
-  
-  
-  # ✅ Added dependencies for profile management
   shared_preferences: ^2.2.2
   image_picker: ^1.0.7
   intl_phone_field: ^3.2.0
+  upi_payment_qrcode_generator: ^1.0.5
+  qr_flutter: ^4.1.0
 
 dev_dependencies:
   flutter_test:
