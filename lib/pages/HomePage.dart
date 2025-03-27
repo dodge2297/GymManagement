@@ -12,6 +12,17 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    // Listen to auth state changes to handle session expiry or logout
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user == null && mounted) {
+        Navigator.pushReplacementNamed(context, AppRoutes.loginRegister);
+      }
+    });
+  }
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -65,8 +76,8 @@ class _HomePageState extends State<HomePage> {
                         AppRoutes.paymentHistory),
                     buildGridItem(context, Icons.directions_run, 'Exercises',
                         AppRoutes.exercises),
-                    buildGridItem(
-                        context, Icons.settings, 'Settings', '/settings'),
+                    buildGridItem(context, Icons.notification_add,
+                        'Notifications', AppRoutes.notifications),
                   ],
                 ),
               ),

@@ -46,7 +46,11 @@ dependencies:
   flutter_inappwebview: ^6.1.5
   upi_payment_qrcode_generator: ^1.0.5
   qr_flutter: ^4.1.0
-
+  firebase_messaging: ^15.2.4
+  cloud_functions: ^5.3.4
+  connectivity_plus: ^5.0.2
+  http: ^1.2.2
+ 
 
 dev_dependencies:
   flutter_test:

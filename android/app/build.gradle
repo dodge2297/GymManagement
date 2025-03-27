@@ -45,3 +45,7 @@ android {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    implementation 'com.google.firebase:firebase-messaging:24.0.3'  // Added for FCM
+}

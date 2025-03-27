@@ -4,6 +4,9 @@ import 'package:gym_app/components/my_button.dart';
 import 'package:gym_app/components/my_textfield.dart';
 import 'package:gym_app/components/square_tile.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:gym_app/pages/adminpage.dart';
+import 'package:gym_app/pages/homepage.dart';
 
 class LoginPage extends StatefulWidget {
   final Function()? onTap;
@@ -16,39 +19,135 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  bool _isLoading = false;
+
   void signUserIn() async {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        });
+    if (!mounted) return;
+    setState(() {
+      _isLoading = true;
+    });
 
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: emailController.text, password: passwordController.text);
-      Navigator.pop(context);
-    } on FirebaseAuthException {
-      Navigator.pop(context);
-
-      final theme = ShadTheme.of(context);
-
-      ShadToaster.of(context).show(
-        ShadToast.destructive(
-          title: const Text('Uh oh! Something went wrong'),
-          description: const Text('Invalid email or password'),
-          action: ShadButton.destructive(
-            child: const Text('Try again'),
-            decoration: ShadDecoration(
-              border: ShadBorder.all(
-                color: theme.colorScheme.destructiveForeground,
-              ),
-            ),
-            onPressed: () => ShadToaster.of(context).hide(),
-          ),
-        ),
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
       );
+
+      // Fetch user data
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .get();
+
+      // Check if the account is disabled
+      final isDisabled = userDoc.get('isDisabled') ?? false;
+      if (isDisabled) {
+        await FirebaseAuth.instance.signOut();
+        setState(() {
+          _isLoading = false;
+        });
+        ShadToaster.of(context).show(
+          const ShadToast.destructive(
+            title: Text('Account Disabled'),
+            description: Text('Your account has been disabled by an admin.'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+        return;
+      }
+
+      // Fetch user role
+      final isAdmin = userDoc.get('isAdmin') ?? false;
+      print('Login - User isAdmin: $isAdmin');
+
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        ShadToaster.of(context).show(
+          ShadToast(
+            title: const Text('Success'),
+            description: const Text('Logged in successfully'),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+
+        // Navigate based on role
+        if (isAdmin) {
+          print('Navigating to AdminPage');
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const AdminPage()),
+          );
+        } else {
+          print('Navigating to HomePage');
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const HomePage()),
+          );
+        }
+      }
+    } on FirebaseAuthException catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+
+        String errorMessage = 'Something went wrong';
+        switch (e.code) {
+          case 'user-not-found':
+            errorMessage = 'No user found with this email';
+            break;
+          case 'wrong-password':
+            errorMessage = 'Incorrect password';
+            break;
+          case 'invalid-email':
+            errorMessage = 'Invalid email format';
+            break;
+          case 'too-many-requests':
+            errorMessage = 'Too many attempts, please try again later';
+            break;
+        }
+
+        final theme = ShadTheme.of(context);
+        ShadToaster.of(context).show(
+          ShadToast.destructive(
+            title: const Text('Uh oh! Something went wrong'),
+            description: Text(errorMessage),
+            action: ShadButton.destructive(
+              child: const Text('Try again'),
+              decoration: ShadDecoration(
+                border: ShadBorder.all(
+                    color: theme.colorScheme.destructiveForeground),
+              ),
+              onPressed: () => ShadToaster.of(context).hide(),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+
+        final theme = ShadTheme.of(context);
+        ShadToaster.of(context).show(
+          ShadToast.destructive(
+            title: const Text('Uh oh! Something went wrong'),
+            description: Text(e.toString()),
+            action: ShadButton.destructive(
+              child: const Text('Try again'),
+              decoration: ShadDecoration(
+                border: ShadBorder.all(
+                    color: theme.colorScheme.destructiveForeground),
+              ),
+              onPressed: () => ShadToaster.of(context).hide(),
+            ),
+          ),
+        );
+      }
     }
   }
 
@@ -91,7 +190,34 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                MyButton(onTap: signUserIn, text: 'Sign In'),
+                MyButton(
+                  onTap: _isLoading ? null : signUserIn,
+                  text: 'Sign In',
+                  child: _isLoading
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              'Signing In...',
+                              style: TextStyle(
+                                fontSize: 17,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        )
+                      : null,
+                ),
                 const SizedBox(height: 50),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -126,9 +252,9 @@ class _LoginPageState extends State<LoginPage> {
                       child: const Text('Register now',
                           style: TextStyle(
                               color: Colors.blue, fontWeight: FontWeight.bold)),
-                    )
+                    ),
                   ],
-                )
+                ),
               ],
             ),
           ),

@@ -21,7 +21,7 @@ class _WorkoutPlanDetailPageState extends State<WorkoutPlanDetailPage> {
   String transactionId = "Txn${DateTime.now().millisecondsSinceEpoch}";
 
   double getPrice() {
-    return 1.0;
+    return 1.0; // Adjusted for testing full UPI
   }
 
   @override
@@ -31,8 +31,15 @@ class _WorkoutPlanDetailPageState extends State<WorkoutPlanDetailPage> {
   }
 
   void _generateUpiUrl() {
-    upiUrl =
-        "upi://pay?pa=$upiId&pn=Gym%20Admin&am=${getPrice()}&tn=Subscription%20for%20${Uri.encodeComponent(widget.plan['duration'])}&tr=$transactionId&cu=INR";
+    final double price = getPrice();
+    upiUrl = "upi://pay"
+        "?pa=$upiId"
+        "&pn=${Uri.encodeComponent('Gym Admin')}"
+        "&am=$price"
+        "&mam=$price"
+        "&tn=${Uri.encodeComponent('Subscription-${widget.plan['duration']}')}"
+        "&tr=$transactionId"
+        "&cu=INR";
     setState(() {});
   }
 
@@ -58,7 +65,6 @@ class _WorkoutPlanDetailPageState extends State<WorkoutPlanDetailPage> {
           duration: Duration(seconds: 2),
         ),
       );
-
       await Future.delayed(const Duration(seconds: 2));
       Navigator.pushReplacementNamed(context, AppRoutes.home);
     } catch (e) {
@@ -117,9 +123,10 @@ class _WorkoutPlanDetailPageState extends State<WorkoutPlanDetailPage> {
                 ),
               ),
               const SizedBox(height: 10),
-              const Text(
-                "Price: ₹1.00",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              Text(
+                "Price: ₹${getPrice().toStringAsFixed(2)}",
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
               if (upiUrl != null && !paymentComplete)

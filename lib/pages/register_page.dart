@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:gym_app/components/my_button.dart';
 import 'package:gym_app/components/my_textfield.dart';
-import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:gym_app/components/square_tile.dart';
-import 'routes.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RegisterPage extends StatefulWidget {
   final Function()? onTap;
@@ -19,38 +18,21 @@ class _RegisterPageState extends State<RegisterPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+  final nameController = TextEditingController();
+  bool _isLoading = false;
 
-  Future<void> signUserUp() async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => const Center(child: CircularProgressIndicator()),
-    );
+  void signUserUp() async {
+    if (!mounted) return;
+    setState(() {
+      _isLoading = true;
+    });
 
-    try {
-      if (passwordController.text.trim() ==
-          confirmPasswordController.text.trim()) {
-        UserCredential userCredential =
-            await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailController.text.trim(),
-          password: passwordController.text.trim(),
-        );
-
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(userCredential.user!.uid)
-            .set({
-          'email': emailController.text.trim(),
-          'isAdmin': false,
-          'createdAt': FieldValue.serverTimestamp(),
+    if (passwordController.text.trim() !=
+        confirmPasswordController.text.trim()) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
         });
-
-        if (mounted) Navigator.of(context, rootNavigator: true).pop();
-        if (mounted) {
-          Navigator.pushReplacementNamed(context, AppRoutes.loginRegister);
-        }
-      } else {
-        if (mounted) Navigator.of(context, rootNavigator: true).pop();
         final theme = ShadTheme.of(context);
         ShadToaster.of(context).show(
           ShadToast.destructive(
@@ -67,14 +49,105 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
         );
       }
-    } on FirebaseAuthException catch (e) {
-      if (mounted) Navigator.of(context, rootNavigator: true).pop();
-      ShadToaster.of(context).show(
-        ShadToast.destructive(
-          title: const Text('Error'),
-          description: Text(e.message ?? 'Something went wrong'),
-        ),
+      return;
+    }
+
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
       );
+
+      await userCredential.user?.reload();
+      await Future.delayed(const Duration(milliseconds: 500));
+      if (FirebaseAuth.instance.currentUser == null) {
+        throw Exception('User authentication not available after registration');
+      }
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .set({
+        'email': emailController.text.trim(),
+        'name': nameController.text.trim(),
+        'createdAt': FieldValue.serverTimestamp(),
+        'isAdmin': false,
+        'isDisabled': false, // Automatically set for new users
+      }, SetOptions(merge: true));
+
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        ShadToaster.of(context).show(
+          ShadToast(
+            title: const Text('Success'),
+            description: const Text('Registered successfully. Please log in.'),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+        await Future.delayed(const Duration(seconds: 2));
+        print('Navigating to login page');
+        if (widget.onTap != null) widget.onTap!();
+      }
+    } on FirebaseAuthException catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        String errorMessage = 'Something went wrong';
+        switch (e.code) {
+          case 'email-already-in-use':
+            errorMessage = 'Email already in use';
+            break;
+          case 'invalid-email':
+            errorMessage = 'Invalid email format';
+            break;
+          case 'weak-password':
+            errorMessage = 'Password is too weak';
+            break;
+          case 'too-many-requests':
+            errorMessage = 'Too many attempts, please try again later';
+            break;
+        }
+        final theme = ShadTheme.of(context);
+        ShadToaster.of(context).show(
+          ShadToast.destructive(
+            title: const Text('Uh oh! Something went wrong'),
+            description: Text(errorMessage),
+            action: ShadButton.destructive(
+              child: const Text('Try again'),
+              decoration: ShadDecoration(
+                border: ShadBorder.all(
+                    color: theme.colorScheme.destructiveForeground),
+              ),
+              onPressed: () => ShadToaster.of(context).hide(),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        final theme = ShadTheme.of(context);
+        ShadToaster.of(context).show(
+          ShadToast.destructive(
+            title: const Text('Uh oh! Something went wrong'),
+            description: Text(e.toString()),
+            action: ShadButton.destructive(
+              child: const Text('Try again'),
+              decoration: ShadDecoration(
+                border: ShadBorder.all(
+                    color: theme.colorScheme.destructiveForeground),
+              ),
+              onPressed: () => ShadToaster.of(context).hide(),
+            ),
+          ),
+        );
+      }
     }
   }
 
@@ -90,35 +163,47 @@ class _RegisterPageState extends State<RegisterPage> {
               children: [
                 const SizedBox(height: 15),
                 Image.asset('lib/images/logo.png', height: 150),
-                const SizedBox(height: 10),
-                const Text('Welcome to the club!',
-                    style: TextStyle(fontSize: 20, color: Colors.black87)),
                 const SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: MyTextfield(
-                      controller: emailController,
-                      hintText: 'Email',
-                      obscureText: false),
+                    controller: nameController,
+                    hintText: 'Full Name',
+                    obscureText: false,
+                  ),
                 ),
                 const SizedBox(height: 10),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: MyTextfield(
-                      controller: passwordController,
-                      hintText: 'Password',
-                      obscureText: true),
+                    controller: emailController,
+                    hintText: 'Email',
+                    obscureText: false,
+                  ),
                 ),
                 const SizedBox(height: 10),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: MyTextfield(
-                      controller: confirmPasswordController,
-                      hintText: 'Confirm Password',
-                      obscureText: true),
+                    controller: passwordController,
+                    hintText: 'Password',
+                    obscureText: true,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: MyTextfield(
+                    controller: confirmPasswordController,
+                    hintText: 'Confirm Password',
+                    obscureText: true,
+                  ),
                 ),
                 const SizedBox(height: 20),
-                MyButton(onTap: signUserUp, text: 'Sign Up'),
+                MyButton(
+                  onTap: _isLoading ? null : signUserUp,
+                  text: _isLoading ? 'Registering...' : 'Register',
+                ),
                 const SizedBox(height: 50),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -145,17 +230,17 @@ class _RegisterPageState extends State<RegisterPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('Already a member?',
-                        style: TextStyle(color: Colors.grey[700])),
+                    const Text('Already a member?',
+                        style: TextStyle(color: Colors.grey)),
                     const SizedBox(width: 3),
                     GestureDetector(
                       onTap: widget.onTap,
                       child: const Text('Login now',
                           style: TextStyle(
                               color: Colors.blue, fontWeight: FontWeight.bold)),
-                    )
+                    ),
                   ],
-                )
+                ),
               ],
             ),
           ),
