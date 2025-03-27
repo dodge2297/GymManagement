@@ -4,9 +4,9 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.2.1'  // Use the latest AGP version
-        classpath 'com.google.gms:google-services:4.4.0'  // For FlutterFire
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0'  // For Kotlin
+        classpath 'com.android.tools.build:gradle:8.3.0'  // Updated to latest stable AGP
+        classpath 'com.google.gms:google-services:4.4.0'  // Latest as of March 2025
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.20'  // Updated to latest stable Kotlin
     }
 }
 
@@ -28,7 +28,7 @@ subprojects {
     afterEvaluate {
         if (project.name == 'upi_india') {
             android {
-                namespace 'com.az.upi_india'  // Correct namespace, verify with manifest
+                namespace 'com.az.upi_india'  // Verify with manifest
             }
         }
     }
