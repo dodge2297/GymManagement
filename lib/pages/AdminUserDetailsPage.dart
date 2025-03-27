@@ -32,10 +32,9 @@ class AdminUserDetailsPage extends StatelessWidget {
         return {'hasPaid': false, 'plan': 'Unknown', 'expiresOn': null};
       }
 
-      // Parse duration (e.g., "3 Months" -> 3)
       int months = int.tryParse(planDuration.split(' ').first) ?? 0;
       final expirationDate = timestamp.add(Duration(days: months * 30));
-      final currentDate = DateTime.now(); // March 21, 2025, in your context
+      final currentDate = DateTime.now();
 
       final hasPaid = currentDate.isBefore(expirationDate);
       return {
@@ -80,6 +79,11 @@ class AdminUserDetailsPage extends StatelessWidget {
               (user['createdAt'] as Timestamp?)?.toDate().toString() ??
                   'Unknown';
           final isDisabled = user['isDisabled'] ?? false;
+          final age = user['age']?.toString() ?? 'Not set';
+          final phone = user['phone']?.toString() ?? 'Not set';
+          final address = user['address']?.toString() ?? 'Not set';
+          final countryCode = user['countryCode']?.toString() ?? 'Not set';
+          final bloodGroup = user['bloodGroup']?.toString() ?? 'Not set';
 
           return SingleChildScrollView(
             child: Padding(
@@ -131,6 +135,12 @@ class AdminUserDetailsPage extends StatelessWidget {
                           Text('Admin: ${isAdmin ? 'Yes' : 'No'}'),
                           Text('Disabled: ${isDisabled ? 'Yes' : 'No'}'),
                           Text('Created: $createdAt'),
+                          const SizedBox(height: 8),
+                          Text('Age: $age'),
+                          Text('Phone: $countryCode $phone'),
+                          Text('Address: $address'),
+                          Text('Blood Group: $bloodGroup'),
+                          const SizedBox(height: 16),
                           FutureBuilder<Map<String, dynamic>>(
                             future: _getSubscriptionStatus(),
                             builder: (context, paymentSnapshot) {

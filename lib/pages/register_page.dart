@@ -21,6 +21,13 @@ class _RegisterPageState extends State<RegisterPage> {
   final nameController = TextEditingController();
   bool _isLoading = false;
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    precacheImage(const AssetImage('lib/images/logo.png'), context);
+    precacheImage(const AssetImage('lib/images/google.png'), context);
+  }
+
   void signUserUp() async {
     if (!mounted) return;
     setState(() {
@@ -71,9 +78,15 @@ class _RegisterPageState extends State<RegisterPage> {
           .set({
         'email': emailController.text.trim(),
         'name': nameController.text.trim(),
+        'age': '',
+        'phone': '',
+        'address': '',
+        'countryCode': '+1',
+        'bloodGroup': null,
+        'profileImage': null,
         'createdAt': FieldValue.serverTimestamp(),
         'isAdmin': false,
-        'isDisabled': false, // Automatically set for new users
+        'isDisabled': false,
       }, SetOptions(merge: true));
 
       if (mounted) {
@@ -235,9 +248,11 @@ class _RegisterPageState extends State<RegisterPage> {
                     const SizedBox(width: 3),
                     GestureDetector(
                       onTap: widget.onTap,
-                      child: const Text('Login now',
-                          style: TextStyle(
-                              color: Colors.blue, fontWeight: FontWeight.bold)),
+                      child: const Text(
+                        'Login now',
+                        style: TextStyle(
+                            color: Colors.blue, fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ],
                 ),
@@ -247,5 +262,14 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    nameController.dispose();
+    super.dispose();
   }
 }

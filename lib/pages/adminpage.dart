@@ -6,7 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:gym_app/pages/routes.dart';
 import 'package:gym_app/pages/adminroutes.dart';
-import 'package:shadcn_ui/shadcn_ui.dart';
 
 class AdminPage extends StatelessWidget {
   const AdminPage({super.key});
@@ -40,7 +39,7 @@ class AdminPage extends StatelessWidget {
       Navigator.pushNamed(
         context,
         AdminRoutes.adminUserManagement,
-        arguments: isAdmin, // Pass isAdmin as an argument
+        arguments: isAdmin,
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -51,65 +50,124 @@ class AdminPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Admin Dashboard'),
-        centerTitle: true,
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () => _logout(context),
+    return WillPopScope(
+      onWillPop: () async => false, // Disable system back button and arrow
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            'Admin Dashboard',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
-        ],
-      ),
-      body: FutureBuilder<String>(
-        future: _getAdminName(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return const Center(child: Text('Error loading admin name'));
-          }
-
-          final adminName = snapshot.data ?? 'Admin';
-
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Welcome, $adminName!',
-                  style: const TextStyle(
-                      fontSize: 28, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 30),
-                ShadButton(
-                  width: double.infinity,
-                  onPressed: () => Navigator.pushNamed(
-                      context, AdminRoutes.adminNotifications),
-                  child: const Text('Send Notifications'),
-                ),
-                const SizedBox(height: 15),
-                ShadButton(
-                  width: double.infinity,
-                  onPressed: () =>
-                      Navigator.pushNamed(context, AdminRoutes.adminUserList),
-                  child: const Text('View User List'),
-                ),
-                const SizedBox(height: 15),
-                ShadButton(
-                  width: double.infinity,
-                  onPressed: () => _navigateToUserManagement(context),
-                  child: const Text('Manage Accounts'),
-                ),
-              ],
+          centerTitle: true,
+          backgroundColor: Colors.black,
+          foregroundColor: Colors.white,
+          automaticallyImplyLeading: false, // Ensure no leading back button
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.logout),
+              onPressed: () => _logout(context),
             ),
-          );
-        },
+          ],
+        ),
+        backgroundColor: Colors.grey[200], // Match HomePage body color
+        body: FutureBuilder<String>(
+          future: _getAdminName(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return const Center(child: Text('Error loading admin name'));
+            }
+
+            final adminName = snapshot.data ?? 'Admin';
+
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'Welcome, $adminName!',
+                    style: const TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  Expanded(
+                    child: GridView.count(
+                      crossAxisCount: 2, // 2 cards per row
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      children: [
+                        _buildAdminCard(
+                          context: context,
+                          icon: Icons.notifications,
+                          label: 'Send Notifications',
+                          onTap: () => Navigator.pushNamed(
+                              context, AdminRoutes.adminNotifications),
+                        ),
+                        _buildAdminCard(
+                          context: context,
+                          icon: Icons.list,
+                          label: 'View User List',
+                          onTap: () => Navigator.pushNamed(
+                              context, AdminRoutes.adminUserList),
+                        ),
+                        _buildAdminCard(
+                          context: context,
+                          icon: Icons.manage_accounts,
+                          label: 'Manage Accounts',
+                          onTap: () => _navigateToUserManagement(context),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAdminCard({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Card(
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        color: Colors.white,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 48,
+              color: Colors.black,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.black,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({Key? key}) : super(key: key);
@@ -41,36 +43,104 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Future<void> _loadProfileData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? imagePath = prefs.getString('profileImage');
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      Navigator.pushReplacementNamed(context, '/login_register');
+      return;
+    }
 
-    setState(() {
-      _nameController.text = prefs.getString('name') ?? "Lebron James";
-      _emailController.text = prefs.getString('email') ?? "impact@gmail.com";
-      _ageController.text = prefs.getString('age') ?? "";
-      _phoneController.text = prefs.getString('phone') ?? "";
-      _addressController.text = prefs.getString('address') ?? "";
-      _selectedCountryCode = prefs.getString('countryCode') ?? "+1";
-      _selectedBloodGroup = prefs.getString('bloodGroup');
-      _imageFile = imagePath != null ? File(imagePath) : null;
-    });
+    try {
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+
+      if (!userDoc.exists) {
+        setState(() {
+          _nameController.text = "Lebron James";
+          _emailController.text = user.email ?? "impact@gmail.com";
+        });
+        return;
+      }
+
+      final data = userDoc.data()!;
+      File? imageFile;
+      if (data['profileImage'] != null) {
+        File tempFile = File(data['profileImage']);
+        if (await tempFile.exists()) {
+          imageFile = tempFile;
+        }
+      }
+
+      setState(() {
+        _nameController.text = data['name'] ?? "Lebron James";
+        _emailController.text =
+            data['email'] ?? user.email ?? "impact@gmail.com";
+        _ageController.text = data['age']?.toString() ?? "";
+        _phoneController.text = data['phone']?.toString() ?? "";
+        _addressController.text = data['address']?.toString() ?? "";
+        _selectedCountryCode = data['countryCode']?.toString() ?? "+1";
+        _selectedBloodGroup = data['bloodGroup']?.toString();
+        _imageFile = imageFile;
+      });
+
+      if (imageFile != null) {
+        precacheImage(FileImage(imageFile), context);
+      }
+    } catch (e) {
+      if (mounted) {
+        ShadToaster.of(context).show(
+          ShadToast.destructive(
+            title: const Text('Error'),
+            description: Text('Failed to load profile: $e'),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _saveProfile() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('name', _nameController.text);
-    await prefs.setString('email', _emailController.text);
-    await prefs.setString('age', _ageController.text);
-    await prefs.setString('phone', _phoneController.text);
-    await prefs.setString('address', _addressController.text);
-    await prefs.setString('countryCode', _selectedCountryCode);
-    if (_selectedBloodGroup != null) {
-      await prefs.setString('bloodGroup', _selectedBloodGroup!);
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      Navigator.pushReplacementNamed(context, '/login_register');
+      return;
     }
-    if (_imageFile != null) {
-      await prefs.setString('profileImage', _imageFile!.path);
+
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+        'name': _nameController.text,
+        'email': _emailController.text,
+        'age': _ageController.text,
+        'phone': _phoneController.text,
+        'address': _addressController.text,
+        'countryCode': _selectedCountryCode,
+        'bloodGroup': _selectedBloodGroup,
+        'profileImage': _imageFile?.path,
+        'updatedAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+
+      if (mounted) {
+        ShadToaster.of(context).show(
+          ShadToast(
+            title: const Text('Success'),
+            description: const Text('Profile updated successfully'),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        ShadToaster.of(context).show(
+          ShadToast.destructive(
+            title: const Text('Error'),
+            description: Text('Failed to update profile: $e'),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
     }
-    Navigator.pop(context);
   }
 
   Future<void> _pickImage() async {
@@ -89,58 +159,81 @@ class _EditProfilePageState extends State<EditProfilePage> {
         _imageFile = savedImage;
       });
 
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('profileImage', savedImage.path);
+      precacheImage(FileImage(savedImage), context);
     }
+  }
+
+  Future<void> _deleteProfilePhoto() async {
+    if (_imageFile != null && await _imageFile!.exists()) {
+      await _imageFile!.delete();
+    }
+
+    setState(() {
+      _imageFile = null;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Edit Profile")),
+      appBar: AppBar(title: const Text("Edit Profile")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              GestureDetector(
-                onTap: _pickImage,
-                child: CircleAvatar(
-                  radius: 50,
-                  backgroundImage: _imageFile != null
-                      ? FileImage(_imageFile!) as ImageProvider
-                      : AssetImage("assets/default_avatar.png"),
-                  child: _imageFile == null
-                      ? Icon(Icons.camera_alt, size: 30, color: Colors.white)
-                      : null,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: _pickImage,
+                    child: CircleAvatar(
+                      radius: 50,
+                      backgroundImage: _imageFile != null
+                          ? FileImage(_imageFile!) as ImageProvider
+                          : null,
+                      backgroundColor: Colors.grey[300],
+                      child: _imageFile == null
+                          ? const Icon(Icons.person,
+                              size: 50, color: Colors.white)
+                          : null,
+                    ),
+                  ),
+                  if (_imageFile != null) ...[
+                    const SizedBox(width: 10),
+                    IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: _deleteProfilePhoto,
+                    ),
+                  ],
+                ],
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextField(
                 controller: _nameController,
-                decoration: InputDecoration(labelText: "Name"),
+                decoration: const InputDecoration(labelText: "Name"),
               ),
               TextField(
                 controller: _emailController,
-                decoration: InputDecoration(labelText: "Email"),
+                decoration: const InputDecoration(labelText: "Email"),
               ),
               TextField(
                 controller: _ageController,
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: "Age"),
+                decoration: const InputDecoration(labelText: "Age"),
               ),
               IntlPhoneField(
                 controller: _phoneController,
-                decoration: InputDecoration(labelText: "Phone Number"),
+                decoration: const InputDecoration(labelText: "Phone Number"),
                 initialCountryCode: "US",
                 onChanged: (phone) {
                   _selectedCountryCode = phone.countryCode;
                 },
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: "Blood Group"),
+                decoration: const InputDecoration(labelText: "Blood Group"),
                 value: _selectedBloodGroup,
                 onChanged: (String? newValue) {
                   setState(() {
@@ -154,20 +247,30 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   );
                 }).toList(),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextField(
                 controller: _addressController,
-                decoration: InputDecoration(labelText: "Address"),
+                decoration: const InputDecoration(labelText: "Address"),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _saveProfile,
-                child: Text("Save Changes"),
+                child: const Text("Save Changes"),
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _ageController.dispose();
+    _phoneController.dispose();
+    _addressController.dispose();
+    super.dispose();
   }
 }

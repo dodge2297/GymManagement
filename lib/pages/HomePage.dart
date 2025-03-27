@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'routes.dart';
-//import 'package:getwidget/getwidget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -29,11 +28,16 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _selectedIndex = index;
     });
-    // Add navigation logic for Profile icon
-    if (index == 2) {
+    if (index == 1) {
+      // Workout icon is at index 1
+      if (ModalRoute.of(context)?.settings.name != AppRoutes.exercises) {
+        Navigator.pushNamed(
+            context, AppRoutes.exercises); // Navigate to Exercises page
+      }
+    } else if (index == 2) {
       // Profile icon is at index 2
       Navigator.pushNamed(
-          context, '/edit_profile'); // Navigate to EditProfilePage
+          context, AppRoutes.editProfile); // Navigate to EditProfilePage
     }
   }
 
