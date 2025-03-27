@@ -61,6 +61,10 @@ app.*.map.json
 !/.flutter-plugins  # Needed for plugin registration
 !/.flutter-plugins-dependencies  # Needed for plugin dependencies
 
+# Un-ignore the functions folder and its contents
+!/functions
+!/functions/**
+
 # Optional: Un-ignore documentation or config files if needed
 !/README.md
 !/.metadata  # Flutter project metadata
