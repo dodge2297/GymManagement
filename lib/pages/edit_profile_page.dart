@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -144,16 +144,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Future<void> _pickImage() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? pickedFile =
-        await picker.pickImage(source: ImageSource.gallery);
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+      allowMultiple: false,
+    );
 
-    if (pickedFile != null) {
+    if (result != null && result.files.single.path != null) {
       final Directory appDir = await getApplicationDocumentsDirectory();
-      final String fileName = pickedFile.name;
+      final String fileName = result.files.single.name;
       final File savedImage = File('${appDir.path}/$fileName');
 
-      await File(pickedFile.path).copy(savedImage.path);
+      await File(result.files.single.path!).copy(savedImage.path);
 
       setState(() {
         _imageFile = savedImage;
