@@ -19,8 +19,10 @@ class _HomePageState extends State<HomePage> {
       _selectedIndex = index;
     });
     // Add navigation logic for Profile icon
-    if (index == 2) { // Profile icon is at index 2
-      Navigator.pushNamed(context, '/edit_profile'); // Navigate to EditProfilePage
+    if (index == 2) {
+      // Profile icon is at index 2
+      Navigator.pushNamed(
+          context, '/edit_profile'); // Navigate to EditProfilePage
     }
   }
 
@@ -67,17 +69,14 @@ class _HomePageState extends State<HomePage> {
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   children: [
-                    buildGridItem(context, Icons.face, 'Profile', '/profile'),
                     buildGridItem(context, Icons.fitness_center, 'Workout Plan',
                         AppRoutes.workoutPlan),
-                    buildGridItem(
-                        context, Icons.bar_chart, 'Training Stats', '/stats'),
                     buildGridItem(context, Icons.payment, 'Payment history',
                         AppRoutes.paymentHistory),
                     buildGridItem(context, Icons.directions_run, 'Exercises',
                         AppRoutes.exercises),
-                    buildGridItem(
-                        context, Icons.settings, 'Settings', '/settings'),
+                    buildGridItem(context, Icons.track_changes,
+                        'Progress Tracker', AppRoutes.progressTracker),
                   ],
                 ),
               ),

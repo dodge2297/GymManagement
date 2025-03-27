@@ -12,7 +12,8 @@ import 'upperbody_exercises.dart';
 import 'workoutplan.dart';
 import 'workoutplandetail.dart';
 import 'paymenthistory.dart';
-import 'edit_profile_page.dart'; // Added Edit Profile Page
+import 'edit_profile_page.dart'; // Already included
+import 'progress_tracker.dart'; // Add this import for ProgressTrackerPage
 
 class AppRoutes {
   static const String auth = '/';
@@ -24,11 +25,12 @@ class AppRoutes {
   static const String absExercises = '/absExercises';
   static const String legsExercises = '/legsExercises';
   static const String upperBodyExercises = '/upperBodyExercises';
-  static const String editProfile = '/edit_profile'; // Added Edit Profile Route
-
+  static const String editProfile = '/edit_profile'; // Already included
   static const String workoutPlan = '/workoutPlan';
   static const String workoutPlanDetail = '/workoutPlanDetail';
   static const String paymentHistory = '/paymentHistory';
+  static const String progressTracker = '/progress_tracker'; // New route
+
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
       case auth:
@@ -50,8 +52,7 @@ class AppRoutes {
       case upperBodyExercises:
         return MaterialPageRoute(builder: (_) => UpperBodyExercisesListPage());
       case editProfile:
-        return MaterialPageRoute(
-            builder: (_) => EditProfilePage()); // New Route
+        return MaterialPageRoute(builder: (_) => EditProfilePage());
       case workoutPlan:
         return MaterialPageRoute(builder: (_) => WorkoutPlanPage());
       case workoutPlanDetail:
@@ -65,6 +66,8 @@ class AppRoutes {
         return _errorRoute('Error: No plan details provided');
       case paymentHistory:
         return MaterialPageRoute(builder: (_) => const PaymentHistoryPage());
+      case progressTracker: // New case for ProgressTrackerPage
+        return MaterialPageRoute(builder: (_) => const ProgressTrackerPage());
       default:
         return _errorRoute('Page Not Found: ${settings.name}');
     }
