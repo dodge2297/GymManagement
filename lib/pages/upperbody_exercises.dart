@@ -214,9 +214,7 @@ class _UpperBodyExercisesListPageState
                             controller: youtubeController,
                             showVideoProgressIndicator: true,
                             progressIndicatorColor: Colors.red,
-                            onReady: () {
-                              // Ensure the controller is ready
-                            },
+                            onReady: () {},
                             onEnded: (metaData) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(content: Text('Video ended')),

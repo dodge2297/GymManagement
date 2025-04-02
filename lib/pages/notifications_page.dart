@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
-import 'package:gym_app/pages/routes.dart';
+import 'package:gym_track/pages/routes.dart';
 
-// Map to cache Future<String> results globally (optional backup)
 final Map<String, Future<String>> _senderNameFutures = {};
 
 class NotificationsPage extends StatefulWidget {
@@ -15,14 +14,13 @@ class NotificationsPage extends StatefulWidget {
 }
 
 class _NotificationsPageState extends State<NotificationsPage> {
-  Map<String, String> _userNames = {}; // Cache UID to name mapping
-  final Map<String, Future<String>> _localSenderFutures =
-      {}; // Per-widget Future cache
+  Map<String, String> _userNames = {};
+  final Map<String, Future<String>> _localSenderFutures = {};
 
   @override
   void initState() {
     super.initState();
-    _loadUserNames(); // Load user names in background
+    _loadUserNames();
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
       if (user == null && mounted) {
         Navigator.pushReplacementNamed(context, AppRoutes.loginRegister);
@@ -63,12 +61,10 @@ class _NotificationsPageState extends State<NotificationsPage> {
   }
 
   String _getCachedSenderName(String senderId) {
-    // Return cached name or fallback to 'Loading...' if not loaded yet
     return _userNames[senderId] ?? 'Loading...';
   }
 
   Future<String> _getSenderName(String senderId) async {
-    // Use local cache first, fall back to global cache or create new Future
     if (!_localSenderFutures.containsKey(senderId)) {
       _localSenderFutures[senderId] = _senderNameFutures[senderId] ??
           (() async {
@@ -204,10 +200,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
               String formattedTime = timestamp != null
                   ? DateFormat('MMM dd, hh:mm a').format(timestamp.toDate())
                   : 'Unknown';
-              String senderName =
-                  _getCachedSenderName(senderId); // Use cached name initially
-
-              // Ensure the Future is cached for this senderId
+              String senderName = _getCachedSenderName(senderId);
               if (!_localSenderFutures.containsKey(senderId)) {
                 _localSenderFutures[senderId] = _getSenderName(senderId);
               }
@@ -235,7 +228,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                             Text(body),
                             const SizedBox(height: 4),
                             Text(
-                              'From: $senderName', // Show cached name while loading
+                              'From: $senderName',
                               style: TextStyle(fontStyle: FontStyle.italic),
                             ),
                             Text(formattedTime),
@@ -264,7 +257,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
                     );
                   }
                   senderName = senderSnapshot.data ?? senderName;
-                  // Only print if the name has changed to avoid redundant logs
                   if (senderSnapshot.data != _userNames[senderId]) {
                     print(
                         'Notification $index: senderId=$senderId, senderName=$senderName');

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:gym_app/pages/login_page.dart';
-import 'package:gym_app/pages/register_page.dart';
-import 'package:gym_app/pages/adminpage.dart';
-import 'package:gym_app/pages/homepage.dart';
+import 'package:gym_track/pages/login_page.dart';
+import 'package:gym_track/pages/register_page.dart';
+import 'package:gym_track/pages/adminpage.dart';
+import 'package:gym_track/pages/homepage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthPage extends StatefulWidget {

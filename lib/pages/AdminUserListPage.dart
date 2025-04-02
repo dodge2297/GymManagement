@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:gym_app/pages/adminroutes.dart';
+import 'package:gym_track/pages/adminroutes.dart';
 
 class AdminUserListPage extends StatefulWidget {
   const AdminUserListPage({super.key});

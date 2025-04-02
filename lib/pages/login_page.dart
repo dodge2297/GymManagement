@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:gym_app/components/my_button.dart';
-import 'package:gym_app/components/my_textfield.dart';
-import 'package:gym_app/components/square_tile.dart';
+import 'package:gym_track/components/my_button.dart';
+import 'package:gym_track/components/my_textfield.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:gym_app/pages/adminpage.dart';
-import 'package:gym_app/pages/homepage.dart';
+import 'package:gym_track/pages/adminpage.dart';
+import 'package:gym_track/pages/homepage.dart';
 
 class LoginPage extends StatefulWidget {
   final Function()? onTap;
@@ -23,7 +21,7 @@ class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
 
   // Sign in with email and password
-  void signUserIn() async {
+  Future<void> signUserIn() async {
     if (!mounted) return;
     setState(() {
       _isLoading = true;
@@ -154,7 +152,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   // Reset password method
-  void resetPassword() async {
+  Future<void> resetPassword() async {
     if (emailController.text.trim().isEmpty) {
       ShadToaster.of(context).show(
         const ShadToast.destructive(
@@ -204,144 +202,6 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  // Sign in with Google
-  void signInWithGoogle() async {
-    if (!mounted) return;
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      // Trigger the Google Sign In flow
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-      if (googleUser == null) {
-        // User cancelled the sign-in
-        setState(() {
-          _isLoading = false;
-        });
-        return;
-      }
-
-      // Obtain the auth details from the request
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-
-      // Create a new credential
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      // Sign in to Firebase with the Google credential
-      UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithCredential(credential);
-
-      // Check if user exists in Firestore, if not create a new entry
-      final userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(userCredential.user!.uid)
-          .get();
-
-      if (!userDoc.exists) {
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(userCredential.user!.uid)
-            .set({
-          'email': userCredential.user!.email,
-          'isAdmin': false,
-          'isDisabled': false,
-          'createdAt': FieldValue.serverTimestamp(),
-        });
-      }
-
-      // Check if the account is disabled
-      final isDisabled = userDoc.get('isDisabled') ?? false;
-      if (isDisabled) {
-        await FirebaseAuth.instance.signOut();
-        setState(() {
-          _isLoading = false;
-        });
-        ShadToaster.of(context).show(
-          const ShadToast.destructive(
-            title: Text('Account Disabled'),
-            description: Text('Your account has been disabled by an admin.'),
-            duration: Duration(seconds: 3),
-          ),
-        );
-        return;
-      }
-
-      // Fetch user role
-      final isAdmin = userDoc.exists ? userDoc.get('isAdmin') ?? false : false;
-
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-        ShadToaster.of(context).show(
-          ShadToast(
-            title: const Text('Success'),
-            description: const Text('Logged in with Google successfully'),
-            duration: const Duration(seconds: 3),
-          ),
-        );
-
-        // Navigate based on role
-        if (isAdmin) {
-          print('Navigating to AdminPage');
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const AdminPage()),
-          );
-        } else {
-          print('Navigating to HomePage');
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const HomePage()),
-          );
-        }
-      }
-    } on FirebaseAuthException catch (e) {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-        String errorMessage = 'Google Sign-In failed';
-        switch (e.code) {
-          case 'account-exists-with-different-credential':
-            errorMessage = 'Account exists with different credentials';
-            break;
-          case 'invalid-credential':
-            errorMessage = 'Invalid Google credentials';
-            break;
-          default:
-            errorMessage = e.message ?? 'An error occurred';
-        }
-        ShadToaster.of(context).show(
-          ShadToast.destructive(
-            title: const Text('Error'),
-            description: Text(errorMessage),
-            duration: const Duration(seconds: 3),
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-        ShadToaster.of(context).show(
-          ShadToast.destructive(
-            title: const Text('Error'),
-            description: Text('An unexpected error occurred: $e'),
-            duration: const Duration(seconds: 3),
-          ),
-        );
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -376,7 +236,7 @@ class _LoginPageState extends State<LoginPage> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: resetPassword,
+                    onPressed: _isLoading ? null : resetPassword,
                     child: const Text('Forgot Password?'),
                   ),
                 ),
@@ -408,31 +268,6 @@ class _LoginPageState extends State<LoginPage> {
                           ],
                         )
                       : null,
-                ),
-                const SizedBox(height: 50),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                          child:
-                              Divider(thickness: 0.5, color: Colors.grey[400])),
-                      const Text('Or continue with'),
-                      Expanded(
-                          child:
-                              Divider(thickness: 0.5, color: Colors.grey[400])),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SquareTile(
-                      imagePath: 'lib/images/google.png',
-                      onTap: _isLoading ? null : signInWithGoogle,
-                    ),
-                  ],
                 ),
                 const SizedBox(height: 30),
                 Row(

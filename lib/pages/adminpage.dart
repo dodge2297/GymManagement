@@ -1,11 +1,8 @@
-// admin_page.dart
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:gym_app/pages/routes.dart';
-import 'package:gym_app/pages/adminroutes.dart';
+import 'package:gym_track/pages/routes.dart';
+import 'package:gym_track/pages/adminroutes.dart';
 
 class AdminPage extends StatelessWidget {
   const AdminPage({super.key});
@@ -51,7 +48,7 @@ class AdminPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async => false, // Disable system back button and arrow
+      onWillPop: () async => false,
       child: Scaffold(
         appBar: AppBar(
           title: const Text(
@@ -61,7 +58,7 @@ class AdminPage extends StatelessWidget {
           centerTitle: true,
           backgroundColor: Colors.black,
           foregroundColor: Colors.white,
-          automaticallyImplyLeading: false, // Ensure no leading back button
+          automaticallyImplyLeading: false,
           actions: [
             IconButton(
               icon: const Icon(Icons.logout),
@@ -69,7 +66,7 @@ class AdminPage extends StatelessWidget {
             ),
           ],
         ),
-        backgroundColor: Colors.grey[200], // Match HomePage body color
+        backgroundColor: Colors.grey[200],
         body: FutureBuilder<String>(
           future: _getAdminName(),
           builder: (context, snapshot) {
@@ -98,7 +95,7 @@ class AdminPage extends StatelessWidget {
                   const SizedBox(height: 30),
                   Expanded(
                     child: GridView.count(
-                      crossAxisCount: 2, // 2 cards per row
+                      crossAxisCount: 2,
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
                       children: [

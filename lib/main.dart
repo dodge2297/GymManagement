@@ -1,10 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:gym_app/pages/auth_page.dart';
-import 'package:gym_app/pages/adminpage.dart';
-import 'package:gym_app/pages/homepage.dart';
+import 'package:gym_track/pages/auth_page.dart';
+import 'package:gym_track/pages/adminpage.dart';
+import 'package:gym_track/pages/homepage.dart';
 import 'firebase_options.dart';
-import 'package:gym_app/pages/routes.dart';
-import 'package:gym_app/pages/adminroutes.dart';
+import 'package:gym_track/pages/routes.dart';
+import 'package:gym_track/pages/adminroutes.dart';
 import 'package:flutter/material.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,15 +14,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // Log Firebase configuration for debugging
   print(
       'Firebase project ID: ${DefaultFirebaseOptions.currentPlatform.projectId}');
   print('Firebase app ID: ${DefaultFirebaseOptions.currentPlatform.appId}');
   print('Firebase API key: ${DefaultFirebaseOptions.currentPlatform.apiKey}');
 
-  // Removed: FirebaseFunctions.instance.useFunctionsEmulator('us-central1', 0);
-
-  // Refresh token if user is logged in
   final initialUser = FirebaseAuth.instance.currentUser;
   if (initialUser != null) {
     try {

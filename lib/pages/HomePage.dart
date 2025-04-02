@@ -16,7 +16,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // Listen to auth state changes to handle session expiry or logout
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
       if (user == null && mounted) {
         Navigator.pushReplacementNamed(context, AppRoutes.loginRegister);
@@ -29,15 +28,11 @@ class _HomePageState extends State<HomePage> {
       _selectedIndex = index;
     });
     if (index == 1) {
-      // Workout icon is at index 1
       if (ModalRoute.of(context)?.settings.name != AppRoutes.exercises) {
-        Navigator.pushNamed(
-            context, AppRoutes.exercises); // Navigate to Exercises page
+        Navigator.pushNamed(context, AppRoutes.exercises);
       }
     } else if (index == 2) {
-      // Profile icon is at index 2
-      Navigator.pushNamed(
-          context, AppRoutes.editProfile); // Navigate to EditProfilePage
+      Navigator.pushNamed(context, AppRoutes.editProfile);
     }
   }
 

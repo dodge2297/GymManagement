@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:gym_app/components/my_button.dart';
-import 'package:gym_app/components/my_textfield.dart';
-import 'package:gym_app/components/square_tile.dart';
+import 'package:gym_track/components/my_button.dart';
+import 'package:gym_track/components/my_textfield.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -25,7 +24,6 @@ class _RegisterPageState extends State<RegisterPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     precacheImage(const AssetImage('lib/images/logo.png'), context);
-    precacheImage(const AssetImage('lib/images/google.png'), context);
   }
 
   void signUserUp() async {
@@ -215,29 +213,31 @@ class _RegisterPageState extends State<RegisterPage> {
                 const SizedBox(height: 20),
                 MyButton(
                   onTap: _isLoading ? null : signUserUp,
-                  text: _isLoading ? 'Registering...' : 'Register',
-                ),
-                const SizedBox(height: 50),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                          child:
-                              Divider(thickness: 0.5, color: Colors.grey[400])),
-                      const Text('Or continue with'),
-                      Expanded(
-                          child:
-                              Divider(thickness: 0.5, color: Colors.grey[400])),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SquareTile(imagePath: 'lib/images/google.png'),
-                  ],
+                  text: 'Register',
+                  child: _isLoading
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              'Registering...',
+                              style: TextStyle(
+                                fontSize: 17,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        )
+                      : null,
                 ),
                 const SizedBox(height: 30),
                 Row(

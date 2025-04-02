@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gym_app/pages/edit_profile_page.dart';
+import 'package:gym_track/pages/edit_profile_page.dart';
 import 'auth_page.dart';
 import 'HomePage.dart';
 import 'Exercises.dart';
@@ -12,7 +12,7 @@ import 'upperbody_exercises.dart';
 import 'workoutplan.dart';
 import 'workoutplandetail.dart';
 import 'paymenthistory.dart';
-import 'progress_tracker.dart'; // Add this import for ProgressTrackerPage
+import 'progress_tracker.dart';
 import 'notifications_page.dart';
 
 class AppRoutes {
@@ -25,13 +25,13 @@ class AppRoutes {
   static const String absExercises = '/absExercises';
   static const String legsExercises = '/legsExercises';
   static const String upperBodyExercises = '/upperBodyExercises';
-  static const String editProfile = '/edit_profile'; // Already included
+  static const String editProfile = '/edit_profile';
   static const String workoutPlan = '/workoutPlan';
   static const String workoutPlanDetail = '/workoutPlanDetail';
   static const String paymentHistory = '/paymentHistory';
-  static const String notifications = '/notifications'; // Add this route
+  static const String notifications = '/notifications';
 
-  static const String progressTracker = '/progress_tracker'; // New route
+  static const String progressTracker = '/progress_tracker';
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -68,7 +68,7 @@ class AppRoutes {
         return _errorRoute('Error: No plan details provided');
       case paymentHistory:
         return MaterialPageRoute(builder: (_) => const PaymentHistoryPage());
-      case progressTracker: // New case for ProgressTrackerPage
+      case progressTracker:
         return MaterialPageRoute(builder: (_) => const ProgressTrackerPage());
       case notifications:
         return MaterialPageRoute(builder: (_) => const NotificationsPage());

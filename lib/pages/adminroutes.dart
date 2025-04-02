@@ -1,10 +1,9 @@
-// adminroutes.dart
 import 'package:flutter/material.dart';
-import 'package:gym_app/pages/adminpage.dart';
-import 'package:gym_app/pages/adminNotificationsPage.dart';
-import 'package:gym_app/pages/adminUserDetailsPage.dart';
-import 'package:gym_app/pages/adminUserListPage.dart';
-import 'package:gym_app/pages/adminUserManagementPage.dart';
+import 'package:gym_track/pages/adminpage.dart';
+import 'package:gym_track/pages/adminNotificationsPage.dart';
+import 'package:gym_track/pages/adminUserDetailsPage.dart';
+import 'package:gym_track/pages/adminUserListPage.dart';
+import 'package:gym_track/pages/adminUserManagementPage.dart';
 
 class AdminRoutes {
   static const String adminHome = '/admin';
@@ -21,7 +20,7 @@ class AdminRoutes {
         return MaterialPageRoute(
             builder: (_) => const AdminNotificationsPage());
       case adminUserManagement:
-        final isAdmin = settings.arguments as bool? ?? false; // Extract isAdmin
+        final isAdmin = settings.arguments as bool? ?? false;
         return MaterialPageRoute(
           builder: (_) => AdminUserManagementPage(isAdmin: isAdmin),
         );
